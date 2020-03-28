@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c825e753-4d31-4f60-9b36-cfe7646f14a4" name="Default Changelist" comment="move-branch">
-      <change afterPath="$PROJECT_DIR$/search/test.py" afterDir="false" />
+    <list default="true" id="c825e753-4d31-4f60-9b36-cfe7646f14a4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/search/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/search/__main__.py" afterDir="false" />
     </list>
@@ -74,7 +73,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1584193734883</updated>
-      <workItem from="1585108895247" duration="11914000" />
+      <workItem from="1585108895247" duration="15335000" />
     </task>
     <task id="LOCAL-00001" summary="move-branch">
       <created>1585109309418</created>
@@ -111,7 +110,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585112772762</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="move-branch">
+      <created>1585209129590</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1585209129590</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -167,10 +173,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="176" key="#Deployment/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585113032986" />
-    <state x="585" y="114" width="1096" height="811" key="CommitChangelistDialog2" timestamp="1585113597237">
+    <state x="585" y="114" width="1096" height="811" key="CommitChangelistDialog2" timestamp="1585209128831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="585" y="114" width="1096" height="811" key="CommitChangelistDialog2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585113597237" />
+    <state x="585" y="114" width="1096" height="811" key="CommitChangelistDialog2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585209128831" />
     <state x="184" y="86" key="DiffContextDialog" timestamp="1585113460746">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -199,10 +205,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585109201545" />
-    <state x="552" y="241" key="Vcs.Push.Dialog.v2" timestamp="1585113579453">
+    <state x="552" y="241" key="Vcs.Push.Dialog.v2" timestamp="1585209151331">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="241" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585113579453" />
+    <state x="552" y="241" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585209151331" />
     <state x="769" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1585113197066">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
