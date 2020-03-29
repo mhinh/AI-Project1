@@ -107,6 +107,14 @@ def main():
         #print(data)
         path = bfs(data)
         print(path)
+        for i in range(len(path)):
+            table = {}
+            print(path[i])
+            for key, value in path[i].items():
+                for j in range(len(value)):
+                    table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
+
+            print_board(table)
         #queue = collections.deque([[data]])
         #path = queue.popleft()
         #print("PATH")
