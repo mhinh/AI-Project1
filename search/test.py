@@ -1,32 +1,85 @@
+import sys
+import json
 import collections
+from search.util import print_move, print_boom, print_board
 
 
-def bfs(grid, start):
-    queue = collections.deque([[start]])
-    seen = set([start])
+
+
+    # TODO: find and print winning action sequence
+
+def boom(current_state, coord):
+    new_state = current_state.copy()
+    for member in new_state["white"]:
+        if member[1:3] == coord:
+            new_state["white"].remove(member)
+            xmin = coord[0]-1
+            xmax = coord[0]+2
+            ymin = coord[1]-1
+            ymax = coord[1]+2
+            for x in range(xmin, xmax):
+                for y in range(ymin, ymax):
+                    new_state = boom(new_state, [x,y])
+
+    return new_state
+
+def move(current_state, direction, coord):
+    new_state = current_state.copy()
+    for white_member in new_state["white"]:
+        if white_member[1:3] == coord:
+            if direction == "left":
+                white_member[1] -= 1
+            if direction == "right":
+                white_member[1] += 1
+            if direction == "up":
+                white_member[2] += 1
+            if direction == "down":
+                white_member[2] -= 1
+    return new_state
+
+def add_all_moves(queue, path, coord, state):
+    if coord[0] >= 0:
+        queue.append(path + [move(state, "left", coord)])
+
+    if coord[0] <= 7:
+        queue.append(path + [move(state, "right", coord)])
+
+    if coord[1] <= 7:
+        queue.append(path + [move(state, "up", coord)])
+
+    if coord[1] >= 0:
+        queue.append(path + [move(state, "down", coord)])
+
+    queue.append(path + [boom(state, coord)])
+
+class Node:
+    def __init__(self, state, children):
+        self.state = state
+        self.children = None
+
+def bfs(start_state):
+    queue = collections.deque([[start_state]])
     while queue:
         path = queue.popleft()
-        x, y = path[-1]
-        if grid[y][x] == goal:
+        current_state = path[-1]
+        if len(current_state["black"]) == 0:
             return path
-        for x2, y2 in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
-            if 0 <= x2 < width and 0 <= y2 < height and (x2, y2) not in seen:
-                queue.append(path + [(x2, y2)])
-                seen.add((x2, y2))
+        for white_member in current_state["white"]:
+            add_all_moves(queue, path, white_member[1:3], current_state)
+
+def main():
+    with open(sys.argv[1]) as file:
+        data = json.load(file)
+        path = bfs(data)
+        print(path)
+        #queue = collections.deque([[data]])
+        #path = queue.popleft()
+        #print("PATH")
+        #print(path)
+        #current_state = path[-1]
+        #for white_member in current_state["white"]:
+        #    add_all_moves(queue, path, white_member[1:3], current_state)
 
 
-goal = 'b,1'
-width, height = 7, 7
-grid = [['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
-        ['   ', '   ', '   ', '   ', 'w,1', '   ', '   ', '   '],
-        ['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
-        ['  ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
-        ['   ', '   ', '   ', '   ', '   ', '   ', 'b,1', '   '],
-        ['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
-        ['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
-        ['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ']]
-
-
-path = bfs(grid, (0, 0))
-print(path)
-# [(5, 2), (4, 2), (4, 3), (4, 4), (5, 4), (6, 4)]
+if __name__ == '__main__':
+    main()

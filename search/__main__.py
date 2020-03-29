@@ -22,28 +22,47 @@ def move(white_order, direction, current_state):
         current_state.state['white'][white_order][2] -= 1
 
 
-def bfs(grid, start, goal):
+def bfs(grid, start):
     queue = collections.deque([[start]])
     seen = set([start])
     while queue:
         path = queue.popleft()
         x, y = path[-1]
-        if boom(grid,(y,x)):
-            grid[y][x] = "   "
+        if boom(grid,(x,y)):
+            grid[start[0]][start[1]] = "   "
             return path
         for x2, y2 in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
-            if 0 <= x2 < width and 0 <= y2 < height and (x2, y2) not in seen:
+            if 0 <= x2 < width and 0 <= y2 < height and (x2, y2) not in seen and grid[x2][y2][0] != 'b':
                 queue.append(path + [(x2, y2)])
                 seen.add((x2, y2))
-
+def copy_grid(grid):
+    new_grid=[]
+    for i in range(len(grid)):
+        temp = []
+        for elem in grid[i]:
+            temp.append(elem)
+        new_grid.append(temp)
+    return new_grid
 
 def boom(grid,coord):
     x, y = coord[0], coord[1]
-    for x, y in (
+    temp_grid = copy_grid(grid)
+    temp_grid[x][y] = "  "
+    for x2,y2 in (
     (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1), (x + 1, y + 1), (x + 1, y - 1), (x - 1, y + 1), (x - 1, y - 1)):
-        if x >= 0 and y >= 0:
-            if grid[x][y][0] == 'b':
-                return True
+        if 0 <= x2 <= 7 and 0 <= y2 <= 7:
+            if temp_grid[x2][y2][0] == 'b':
+                boom(temp_grid,(x2,y2))
+            temp_grid[x2][y2] = "   "
+    for i in range(len(temp_grid)):
+        for elem in temp_grid[i]:
+            if elem[0] == 'b':
+                return False
+    for i in range(8):
+        for j in range(8):
+            if grid[i][j] != temp_grid[i][j]:
+                grid[i][j] = temp_grid[i][j]
+    return True
 
 
 def main():
@@ -68,13 +87,12 @@ def main():
                     cells.append(str(init_table[x, y]))
             grid.append(cells)
         white_location = (data['white'][0][1], data['white'][0][2])
-        boom(grid,(3, 5))
-
-        path = bfs(grid, white_location, 'b,1')
+        path = bfs(grid, white_location)
         print(path)
-        for i in range(len(path)-1):
-            print_move(1,path[i][0],path[i][1],path[i+1][0],path[i+1][1])
-        print_boom(path[-1][0],path[-1][1])
+        print(grid)
+        #for i in range(len(path)-1):
+        #    print_move(1,path[i][0],path[i][1],path[i+1][0],path[i+1][1])
+        #print_boom(path[-1][0],path[-1][1])
 
         #print(grid)
 
@@ -82,7 +100,7 @@ def main():
         # move(0,'DOWN',start_state)
         # move(0, 'DOWN', start_state)
         # move(0, 'DOWN', start_state)
-        # move(0, 'DOWN', start_state)
+        # move(0, 'DOWN', start_state
 
         # print(start_state.state)
 
