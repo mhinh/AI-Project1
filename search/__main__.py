@@ -24,16 +24,43 @@ def boom(current_state, coord):
 
 def move(current_state, direction, coord):
     new_state = copy.deepcopy(current_state)
+    list_black_coords=[[coord[1],coord[2]] for coord in new_state['black']]
     for white_member in new_state["white"]:
         if white_member[1:3] == coord:
-            if direction == "left":
+            if direction == "left" and [white_member[1] -1,white_member[2]] not in list_black_coords:
                 white_member[1] -= 1
-            if direction == "right":
+                if white_member[1:3] in list_black_coords and white_member[0] > 1:
+                    white_member[1] -= 1
+            if direction == "right" and [white_member[1] +1,white_member[2]] not in list_black_coords:
                 white_member[1] += 1
-            if direction == "up":
+                if white_member[1:3] in list_black_coords and white_member[0] > 1:
+                    white_member[1] += 1
+            if direction == "up" and [white_member[1],white_member[2] + 1] not in list_black_coords:
                 white_member[2] += 1
-            if direction == "down":
+                if white_member[1:3] in list_black_coords and white_member[0] > 1:
+                    white_member[2] += 1
+            if direction == "down" and [white_member[1],white_member[2] -1] not in list_black_coords:
                 white_member[2] -= 1
+                if white_member[1:3] in list_black_coords and white_member[0] > 1:
+                    white_member[2] -= 1
+    for i in range(len(new_state["white"])-1):
+        for j in range(i+1,len(new_state["white"])):
+            if new_state['white'][i][1:3] == new_state['white'][j][1:3]:
+                new_state['white'][i][0] += new_state['white'][j][0]
+                new_state['white'].remove(new_state['white'][j])
+                break
+
+    for white_member in new_state["white"]:
+        if white_member[1:3] == coord:
+            if direction == "left" and [white_member[1] -1,white_member[2]] in list_black_coords and white_member[0] > 1:
+                    white_member[1] -= 2
+            if direction == "right" and [white_member[1] +1,white_member[2]] in list_black_coords and white_member[0] > 1:
+                    white_member[1] += 2
+            if direction == "up" and [white_member[1] ,white_member[2]+1] in list_black_coords and white_member[0] > 1:
+                    white_member[2] += 2
+            if direction == "down" and [white_member[1],white_member[2]-1] in list_black_coords and white_member[0] > 1:
+                    white_member[2] -= 2
+
 
     return new_state
 
@@ -41,27 +68,18 @@ def movable(current_state, direction, coord, path):
     if direction == "left":
         if coord[0] <= 0:
             return False
-        for black_member in current_state["black"]:
-            if black_member[2] == coord[1] and black_member[1] == coord[0]-1:
-                return False
+
     if direction == "right":
         if coord[0] >= 7:
             return False
-        for black_member in current_state["black"]:
-            if black_member[2] == coord[1] and black_member[1] == coord[0]+1:
-                return False
+
     if direction == "up":
         if coord[1] >= 7:
             return False
-        for black_member in current_state["black"]:
-            if black_member[1] == coord[0] and black_member[2] == coord[1]+1:
-                return False
     if direction == "down":
         if coord[1] <= 0:
             return False
-        for black_member in current_state["black"]:
-            if black_member[1] == coord[0] and black_member[2] == coord[1]-1:
-                return False
+
 
     new_state = move(current_state, direction, coord)
     if len(path)>1 and path[-2]==new_state:
@@ -100,15 +118,24 @@ def bfs(start_state):
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-        #print(boom(data, [1,4]))
-        #print(move(data, "right", [1,4]))
-        #print("STATE AFTER MOVE")
+        init_table={}
+        for key, value in data.items():
+            for i in range(len(value)):
+                init_table[(value[i][1], value[i][2])] = key[0] + ',' + str(value[i][0])
+
+        #print_board(init_table)
+        #data=move(data, "left", [1,0])
         #print(data)
+        #data=move(data,"up",[0,0])
+        #print(data)
+        #data=move(data,'up',[0,1])
+        #print(data)
+
         path = bfs(data)
-        #print(path)
+        print(path)
+
         for i in range(len(path)):
             table = {}
-            #print(path[i])
             for key, value in path[i].items():
                 for j in range(len(value)):
                     table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
@@ -123,15 +150,6 @@ def main():
             else:
                 print_boom(path[i]['white'][0][1], path[i]['white'][0][2])
 
-        #queue = collections.deque([[data]])
-        #path = queue.popleft()
-        #print("PATH")
-        #print(path)
-        #current_state = path[-1]
-        #for white_member in current_state["white"]:
-        #    add_all_moves(queue, path, white_member[1:3], current_state)
-        #print("RESULTING QUEUE")
-        #print(queue)
 
 
 if __name__ == '__main__':
