@@ -105,7 +105,7 @@ def main():
         #print("STATE AFTER MOVE")
         #print(data)
         path = bfs(data)
-        print(path)
+        #print(path)
         for i in range(len(path)):
             table = {}
             #print(path[i])
@@ -113,7 +113,7 @@ def main():
                 for j in range(len(value)):
                     table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
 
-            #print_board(table)
+            print_board(table)
         for i in range(len(path)-1):
             if path[i+1]['white'] != [] :
                 if len(path[i]['white']) != len(path[i+1]['white']):

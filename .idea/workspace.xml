@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ea7a9014-e7e1-484f-92e3-bfe620100a58" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/search/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/search/__main__.py" afterDir="false" />
-    </list>
+    <list default="true" id="ea7a9014-e7e1-484f-92e3-bfe620100a58" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -95,7 +92,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585634441917</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="huy-move">
+      <created>1585635273832</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1585635273832</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,10 +127,10 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="304" y="187" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1585116204249" />
-    <state x="585" y="114" key="CommitChangelistDialog2" timestamp="1585634441289">
+    <state x="585" y="114" key="CommitChangelistDialog2" timestamp="1585635273245">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="585" y="114" key="CommitChangelistDialog2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585634441289" />
+    <state x="585" y="114" key="CommitChangelistDialog2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585635273245" />
     <state x="341" y="164" key="SettingsEditor" timestamp="1585124864971">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -135,10 +139,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="747" y="236" key="VCS.ChangeListViewerDialog/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585622634242" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1585634452491">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1585635281531">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585634452491" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1585635281531" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.dvcs.ui.CompareBranchesDialog" timestamp="1585622705603">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
