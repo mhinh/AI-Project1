@@ -69,20 +69,25 @@ def movable(current_state, direction, coord, path):
 
     return True
 
-def add_all_moves(queue, path, coord, state):
-    if movable(state, "left", coord, path):
+def add_all_moves(queue, path,seen, coord, state):
+    if movable(state, "left", coord, path) and move(state, "left", coord) not in seen:
         queue.append(path + [move(state, "left", coord)])
-    if movable(state, "right", coord, path):
+        seen.append(move(state, "left", coord))
+    if movable(state, "right", coord, path) and move(state, "right", coord) not in seen:
         queue.append(path + [move(state, "right", coord)])
-    if movable(state, "up", coord, path):
+        seen.append(move(state, "right", coord))
+    if movable(state, "up", coord, path) and move(state, "up", coord) not in seen:
         queue.append(path + [move(state, "up", coord)])
-    if movable(state, "down", coord, path):
+        seen.append(move(state, "up", coord))
+    if movable(state, "down", coord, path) and move(state, "down", coord) not in seen:
         queue.append(path + [move(state, "down", coord)])
+        seen.append(move(state, "down", coord))
 
     queue.append(path + [boom(state, coord)])
 
 def bfs(start_state):
     queue = collections.deque([[start_state]])
+    seen = list([start_state])
     while queue:
         path = queue.popleft()
     #    print(path)
@@ -90,7 +95,7 @@ def bfs(start_state):
         if len(current_state["black"]) == 0:
             return path
         for white_member in current_state["white"]:
-            add_all_moves(queue, path, white_member[1:3], current_state)
+            add_all_moves(queue, path,seen, white_member[1:3], current_state)
 
 def main():
     with open(sys.argv[1]) as file:
