@@ -109,6 +109,8 @@ def main():
                     table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
 
             print_board(table)
+
+
         #queue = collections.deque([[data]])
         #path = queue.popleft()
         #print("PATH")

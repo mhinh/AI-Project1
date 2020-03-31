@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ea7a9014-e7e1-484f-92e3-bfe620100a58" name="Default Changelist" comment="" />
+    <list default="true" id="ea7a9014-e7e1-484f-92e3-bfe620100a58" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/search/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/search/__main__.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -89,7 +91,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
