@@ -103,13 +103,20 @@ def main():
         print(path)
         for i in range(len(path)):
             table = {}
-            print(path[i])
+            #print(path[i])
             for key, value in path[i].items():
                 for j in range(len(value)):
                     table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
 
-            print_board(table)
-
+            #print_board(table)
+        for i in range(len(path)-1):
+            if path[i+1]['white'] != [] :
+                if len(path[i]['white']) != len(path[i+1]['white']):
+                    print_boom(path[i]['white'][0][1],path[i]['white'][0][2])
+                    continue
+                print_move(1,path[i]['white'][0][1],path[i]['white'][0][2],path[i+1]['white'][0][1],path[i+1]['white'][0][2])
+            else:
+                print_boom(path[i]['white'][0][1], path[i]['white'][0][2])
 
         #queue = collections.deque([[data]])
         #path = queue.popleft()
