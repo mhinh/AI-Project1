@@ -29,20 +29,16 @@ def move(current_state, direction, coord):
         if white_member[1:3] == coord:
             if direction == "left" and [white_member[1] -1,white_member[2]] not in list_black_coords:
                 white_member[1] -= 1
-                if white_member[1:3] in list_black_coords and white_member[0] > 1:
-                    white_member[1] -= 1
+
             if direction == "right" and [white_member[1] +1,white_member[2]] not in list_black_coords:
                 white_member[1] += 1
-                if white_member[1:3] in list_black_coords and white_member[0] > 1:
-                    white_member[1] += 1
+
             if direction == "up" and [white_member[1],white_member[2] + 1] not in list_black_coords:
                 white_member[2] += 1
-                if white_member[1:3] in list_black_coords and white_member[0] > 1:
-                    white_member[2] += 1
+
             if direction == "down" and [white_member[1],white_member[2] -1] not in list_black_coords:
                 white_member[2] -= 1
-                if white_member[1:3] in list_black_coords and white_member[0] > 1:
-                    white_member[2] -= 1
+
     for i in range(len(new_state["white"])-1):
         for j in range(i+1,len(new_state["white"])):
             if new_state['white'][i][1:3] == new_state['white'][j][1:3]:
