@@ -6,13 +6,13 @@ from search.util import print_move, print_boom, print_board
 
     # TODO: find and print winning action sequence
 
-def boom(current_state, coord):
+def boom(current_state, coord, boomed):
     #print("+++++++START++++++++")
-    #print(coord)
+    #delete the token in that coord
     new_state = {}
     new_state["white"] = [x for x in current_state["white"] if x[1:3] != coord]
     new_state["black"] = [y for y in current_state["black"] if y[1:3] != coord]
-    #new_state = copy.deepcopy(current_state)
+    boomed += [coord]
     #base case: removed all tokens or no tokens around
     xmin = coord[0]-1
     if xmin < 0:
@@ -26,26 +26,18 @@ def boom(current_state, coord):
     ymax = coord[1]+2
     if ymax > 8:
         ymax = 8
-    #print(range(xmin, xmax))
-    #print(range(ymin, ymax))
+    #if nothing is left then return state
     if len(new_state["white"]) == 0 and len(new_state["black"]) == 0:
-    #    print("ALL BOOMED")
         return new_state
-    #print("START BOOMING NEIGHBORS")
+    #check all x and y around
     for x in range(xmin, xmax):
-    #    print("x=", end="")
-    #    print(x)
         for y in range(ymin, ymax):
-    #        print("y=", end="")
-    #        print(y)
-            for member in new_state["white"]+new_state["black"]:
-    #            print("check member", end=" ")
-    #            print(member[1:3], end=" ")
-    #            print("against", end=" ")
-    #            print([x,y])
-                if member[1:3] == [x,y]:
-    #                print("---------RECURSE----------")
-                    new_state = boom(new_state, [x,y])
+            #check all tokens if there is any in that area
+            if [x,y] not in boomed:
+                for member in new_state["white"]+new_state["black"]:
+                #if found then recurse
+                    if member[1:3] == [x,y]:
+                        new_state = boom(new_state, [x,y], boomed)
 
     return new_state
 
@@ -169,7 +161,7 @@ def add_stack_moves(queue, path, seen, state, member):
                     if new_state not in seen:
                         queue.append(path + [new_state])
                         seen.append(new_state)
-    new_state = boom(state, member[1:3])
+    new_state = boom(state, member[1:3], [])
     if new_state not in seen:
         queue.append(path + [new_state])
         seen.append(new_state)
@@ -205,9 +197,9 @@ def bfs(start_state):
     seen = list([start_state])
     while queue:
         path = queue.popleft()
-        #print("--------------")
-        #for s in path:
-        #    print(s)
+        print("--------------")
+        for s in path:
+            print(s)
     #    print(path)
         current_state = path[-1]
         if len(current_state["black"]) == 0:
