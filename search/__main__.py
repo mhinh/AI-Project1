@@ -219,7 +219,6 @@ def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
         path = bfs(data)
-        print('-----------------------------')
         for state in path:
             print(state)
         #new_state = {}
