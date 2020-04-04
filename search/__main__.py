@@ -169,10 +169,10 @@ def add_stack_moves(queue, path, seen, state, member):
                     if new_state not in seen:
                         queue.append(path + [new_state])
                         seen.append(new_state)
-    #new_state = boom(new_state, member[1:3])
-    #if new_state not in seen:
-    #    queue.append(path + [new_state])
-    #    seen.append(new_state)
+    new_state = boom(new_state, member[1:3])
+    if new_state not in seen:
+        queue.append(path + [new_state])
+        seen.append(new_state)
 
 def add_all_moves(queue, path, seen, coord, state):
     new_state = {}
@@ -200,16 +200,35 @@ def add_all_moves(queue, path, seen, coord, state):
     queue.append(path + [boom(state, coord)])
     seen.append(boom(state, coord))
 
+def count_members(team):
+    count = 0
+    for member in team:
+        count += member[0]
+    return count
+
+
+def first_bfs(start_state):
+    queue = collections.deque([[start_state]])
+    seen = list([start_state])
+    while queue:
+        path = queue.popleft()
+        current_state = path[-1]
+        if count_members(current_state["black"]) <= count_members(current_state["white"]):
+            return path
+        for white_member in current_state["white"]:
+            #add_all_moves(queue, path, seen, white_member[1:3], current_state)
+            add_stack_moves(queue, path, seen, current_state, white_member)
+
 def bfs(start_state):
     queue = collections.deque([[start_state]])
     seen = list([start_state])
     while queue:
         path = queue.popleft()
         current_state = path[-1]
-        boom_state = copy.deepcopy(current_state)
-        for white_member in boom_state["white"]:
-            boom_state = boom(boom_state, white_member[1:3])
-        if len(boom_state["black"]) == 0:
+        #boom_state = copy.deepcopy(current_state)
+        #for white_member in boom_state["white"]:
+    #        boom_state = boom(boom_state, white_member[1:3])
+        if len(current_state["black"]) == 0:
             return path
         for white_member in current_state["white"]:
             #add_all_moves(queue, path, seen, white_member[1:3], current_state)
@@ -218,9 +237,16 @@ def bfs(start_state):
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-        path = bfs(data)
-        for state in path:
+        print("FIRST ROUND")
+        path1 = first_bfs(data)
+        for state in path1:
             print(state)
+        current_state = path1[-1]
+        print("SECOND ROUND")
+        if len(current_state["black"]) > 0:
+            path2 = bfs(current_state)
+            for state in path2:
+                print(state)
         #new_state = {}
 
         #new_state["white"] = [x for x in data["white"] if x[1:3] != [1,4]]
@@ -238,13 +264,13 @@ def main():
         #add_stack_moves(queue, path, seen, current_state, data["white"][0])
         #for path in queue:
         #    print(path)
-        for i in range(len(path)):
-            table = {}
-            for key, value in path[i].items():
-                for j in range(len(value)):
-                    table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
+        #for i in range(len(path)):
+        #    table = {}
+        #    for key, value in path[i].items():
+        #        for j in range(len(value)):
+        #            table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
 
-            print_board(table)
+        #    print_board(table)
         #for i in range(len(path) - 1):
         #    if path[i + 1]['white'] != []:
         #        if len(path[i]['white']) != len(path[i + 1]['white']):
