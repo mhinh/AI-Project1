@@ -6,13 +6,18 @@ from search.util import print_move, print_boom, print_board
 
     # TODO: find and print winning action sequence
 
-def boom(current_state, coord):
+def boom(current_state, coord, boomed):
     #print("+++++++START++++++++")
+    #print("coord", end=":")
     #print(coord)
+    #print("STATE BEFORE BOOM", end=":")
+    #print(current_state)
     new_state = {}
     new_state["white"] = [x for x in current_state["white"] if x[1:3] != coord]
     new_state["black"] = [y for y in current_state["black"] if y[1:3] != coord]
-    #new_state = copy.deepcopy(current_state)
+    boomed.append(coord)
+    #print("STATE AFTER BOOM", end=":")
+    #print(new_state)
     #base case: removed all tokens or no tokens around
     xmin = coord[0]-1
     if xmin < 0:
@@ -33,34 +38,22 @@ def boom(current_state, coord):
         return new_state
     #print("START BOOMING NEIGHBORS")
     for x in range(xmin, xmax):
-    #    print("x=", end="")
-    #    print(x)
         for y in range(ymin, ymax):
-    #        print("y=", end="")
-    #        print(y)
-            for member in new_state["white"]+new_state["black"]:
-    #            print("check member", end=" ")
-    #            print(member[1:3], end=" ")
-    #            print("against", end=" ")
-    #            print([x,y])
-                if member[1:3] == [x,y]:
-    #                print("---------RECURSE----------")
-                    new_state = boom(new_state, [x,y])
-
-    return new_state
-
-def move(current_state, direction, coord):
-    new_state = copy.deepcopy(current_state)
-    for white_member in new_state["white"]:
-        if white_member[1:3] == coord:
-            if direction == "left":
-                white_member[1] -= 1
-            if direction == "right":
-                white_member[1] += 1
-            if direction == "up":
-                white_member[2] += 1
-            if direction == "down":
-                white_member[2] -= 1
+    #        print("x y", end=":")
+    #        print([x,y])
+            if [x,y] not in boomed:
+    #            print("already deleted")
+                for member in new_state["white"]+new_state["black"]:
+    #                print("check member", end=" ")
+    #                print(member[1:3], end=" ")
+    #                print("against", end=" ")
+    #                print([x,y])
+                    if member[1:3] == [x,y]:
+    #                    print("---------RECURSE----------")
+                        new_state = boom(new_state, [x,y], boomed)
+                        break;
+    #print(".........End Recurse for", end=" ")
+    #print(coord)
 
     return new_state
 
@@ -114,34 +107,6 @@ def future_coord(current_coord, direction, distance):
         future_coord[1] -= distance
     return future_coord
 
-def movable(current_state, direction, coord):
-    if direction == "left":
-        if coord[0] <= 0:
-            return False
-        for black_member in current_state["black"]:
-            if black_member[2] == coord[1] and black_member[1] == coord[0]-1:
-                return False
-    if direction == "right":
-        if coord[0] >= 7:
-            return False
-        for black_member in current_state["black"]:
-            if black_member[2] == coord[1] and black_member[1] == coord[0]+1:
-                return False
-    if direction == "up":
-        if coord[1] >= 7:
-            return False
-        for black_member in current_state["black"]:
-            if black_member[1] == coord[0] and black_member[2] == coord[1]+1:
-                return False
-    if direction == "down":
-        if coord[1] <= 0:
-            return False
-        for black_member in current_state["black"]:
-            if black_member[1] == coord[0] and black_member[2] == coord[1]-1:
-                return False
-
-    return True
-
 def movable_stack(current_state, coord, direction, distance):
     f_coord = []
     f_coord = future_coord(coord, direction, distance)
@@ -158,6 +123,12 @@ def movable_stack(current_state, coord, direction, distance):
 
     return True
 
+def count_members(team):
+    count = 0
+    for member in team:
+        count += member[0]
+    return count
+
 def add_stack_moves(queue, path, seen, state, member):
     new_state = {}
     directions = ["left", "right", "up", "down"]
@@ -169,43 +140,10 @@ def add_stack_moves(queue, path, seen, state, member):
                     if new_state not in seen:
                         queue.append(path + [new_state])
                         seen.append(new_state)
-    new_state = boom(new_state, member[1:3])
+    new_state = boom(state, member[1:3], [])
     if new_state not in seen:
         queue.append(path + [new_state])
         seen.append(new_state)
-
-def add_all_moves(queue, path, seen, coord, state):
-    new_state = {}
-    if movable(state, "left", coord):
-        new_state = move(state, "left", coord)
-        if new_state not in seen:
-            queue.append(path + [new_state])
-            seen.append(new_state)
-    if movable(state, "right", coord):
-        new_state = move(state, "right", coord)
-        if new_state not in seen:
-            queue.append(path + [new_state])
-            seen.append(new_state)
-    if movable(state, "up", coord):
-        new_state = move(state, "up", coord)
-        if new_state not in seen:
-            queue.append(path + [new_state])
-            seen.append(new_state)
-    if movable(state, "down", coord):
-        new_state = move(state, "down", coord)
-        if new_state not in seen:
-            queue.append(path + [new_state])
-            seen.append(new_state)
-
-    queue.append(path + [boom(state, coord)])
-    seen.append(boom(state, coord))
-
-def count_members(team):
-    count = 0
-    for member in team:
-        count += member[0]
-    return count
-
 
 def first_bfs(start_state):
     queue = collections.deque([[start_state]])
@@ -213,6 +151,9 @@ def first_bfs(start_state):
     while queue:
         path = queue.popleft()
         current_state = path[-1]
+        #print("-------")
+        #for state in path:
+        #    print(state)
         if count_members(current_state["black"]) <= count_members(current_state["white"]):
             return path
         for white_member in current_state["white"]:
@@ -247,15 +188,14 @@ def main():
             path2 = bfs(current_state)
             for state in path2:
                 print(state)
-        #new_state = {}
-
+        #path = bfs(data)
         #new_state["white"] = [x for x in data["white"] if x[1:3] != [1,4]]
         #new_state["black"] = data["black"]
         #print("NEW STATE", end=":")
         #print(new_state)
         #print("DATA", end=":")
         #print(data)
-        #print(boom(data, [1,4]))
+        #print(boom(data, [1,4], []))
         #print(path)
         #queue = collections.deque([[data]])
         #seen = list([data])
