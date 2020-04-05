@@ -57,7 +57,7 @@ def boom(current_state, coord, boomed):
 
     return new_state
 
-def move_stack(current_state, coord, direction, distance, number):
+def move_stack(current_state, coord, direction, distance, number, round):
     new_state = copy.deepcopy(current_state)
 
     #if moving onto another white then form a stack
@@ -123,44 +123,50 @@ def movable_stack(current_state, coord, direction, distance):
 
     return True
 
+def valid_stack(state, round):
+    for white_member in state["white"]:
+        if white_member[0] > round:
+            return False
+    return True
+
 def count_members(team):
     count = 0
     for member in team:
         count += member[0]
     return count
 
-def add_stack_moves(queue, path, seen, state, member):
+def add_stack_moves(queue, path, seen, state, member, round):
     new_state = {}
     directions = ["left", "right", "up", "down"]
-    for direction in directions:
+    for number in range(1, round):
+
         for distance in range(1, member[0]+1):
-            for number in range(1, member[0]+1):
+            for direction in directions:
                 if movable_stack(state, member[1:3], direction, distance):
-                    new_state = move_stack(state, member[1:3], direction, distance, number)
-                    if new_state not in seen:
+                    new_state = move_stack(state, member[1:3], direction, distance, number, round)
+                    if new_state not in seen and valid_stack(new_state, round):
                         queue.append(path + [new_state])
                         seen.append(new_state)
     new_state = boom(state, member[1:3], [])
-    if new_state not in seen:
-        queue.append(path + [new_state])
-        seen.append(new_state)
+    if not (new_state["white"] == 0 and new_state["black"] > 0):
+        if new_state not in seen:
+            queue.append(path + [new_state])
+            seen.append(new_state)
 
-def first_bfs(start_state):
+def first_bfs(start_state, round):
     queue = collections.deque([[start_state]])
     seen = list([start_state])
     while queue:
         path = queue.popleft()
         current_state = path[-1]
-        #print("-------")
-        #for state in path:
-        #    print(state)
+
         if count_members(current_state["black"]) <= count_members(current_state["white"]):
             return path
         for white_member in current_state["white"]:
             #add_all_moves(queue, path, seen, white_member[1:3], current_state)
-            add_stack_moves(queue, path, seen, current_state, white_member)
+            add_stack_moves(queue, path, seen, current_state, white_member, round)
 
-def bfs(start_state):
+def bfs(start_state, round):
     queue = collections.deque([[start_state]])
     seen = list([start_state])
     while queue:
@@ -173,22 +179,30 @@ def bfs(start_state):
             return path
         for white_member in current_state["white"]:
             #add_all_moves(queue, path, seen, white_member[1:3], current_state)
-            add_stack_moves(queue, path, seen, current_state, white_member)
+            add_stack_moves(queue, path, seen, current_state, white_member, round)
 
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-        print("FIRST ROUND")
-        path1 = first_bfs(data)
-        for state in path1:
-            print(state)
-        current_state = path1[-1]
-        print("SECOND ROUND")
-        if len(current_state["black"]) > 0:
-            path2 = bfs(current_state)
-            for state in path2:
-                print(state)
-        #path = bfs(data)
+        #print("FIRST ROUND")
+        #path1 = first_bfs(data)
+        #for state in path1:
+        #    print(state)
+        #current_state = path1[-1]
+        #print("SECOND ROUND")
+        #if len(current_state["black"]) > 0:
+        #    path2 = bfs(current_state)
+        #    for state in path2:
+        #        print(state)
+        max_rounds = count_members(data["white"])
+        round = 1
+        path = None
+        while path == None and round <= max_rounds:
+            print("round", end=" ")
+            print(round)
+            path = bfs(data, round)
+            round += 1
+
         #new_state["white"] = [x for x in data["white"] if x[1:3] != [1,4]]
         #new_state["black"] = data["black"]
         #print("NEW STATE", end=":")
@@ -196,7 +210,7 @@ def main():
         #print("DATA", end=":")
         #print(data)
         #print(boom(data, [1,4], []))
-        #print(path)
+        print(path)
         #queue = collections.deque([[data]])
         #seen = list([data])
         #path = queue.popleft()
