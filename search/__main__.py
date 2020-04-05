@@ -2,6 +2,7 @@ import sys
 import json
 import collections
 import copy
+import heapq
 from search.util import print_move, print_boom, print_board
 
     # TODO: find and print winning action sequence
@@ -57,7 +58,7 @@ def boom(current_state, coord, boomed):
 
     return new_state
 
-def move_stack(current_state, coord, direction, distance, number, round):
+def move_stack(current_state, coord, direction, distance, number):
     new_state = copy.deepcopy(current_state)
 
     #if moving onto another white then form a stack
@@ -123,54 +124,77 @@ def movable_stack(current_state, coord, direction, distance):
 
     return True
 
-def valid_stack(state, round):
-    for white_member in state["white"]:
-        if white_member[0] > round:
-            return False
-    return True
-
 def count_members(team):
     count = 0
     for member in team:
         count += member[0]
     return count
 
-def add_stack_moves(queue, path, seen, state, member, round):
+def add_stack_moves(queue, path, seen, state, member):
     new_state = {}
     directions = ["left", "right", "up", "down"]
-    for number in range(1, round):
+    for number in range(1, member[0]+1):
 
         for distance in range(1, member[0]+1):
             for direction in directions:
                 if movable_stack(state, member[1:3], direction, distance):
-                    new_state = move_stack(state, member[1:3], direction, distance, number, round)
-                    if new_state not in seen and valid_stack(new_state, round):
-                        queue.append(path + [new_state])
+                    new_state = move_stack(state, member[1:3], direction, distance, number)
+
+                    if new_state not in seen:
+                        queue.append([heuristic(new_state), (path + [new_state])])
                         seen.append(new_state)
     new_state = boom(state, member[1:3], [])
     if not (new_state["white"] == 0 and new_state["black"] > 0):
         if new_state not in seen:
-            queue.append(path + [new_state])
+            queue.append([heuristic(new_state), (path + [new_state])])
+            #queue.append(path + [new_state])
             seen.append(new_state)
 
-def first_bfs(start_state, round):
-    queue = collections.deque([[start_state]])
+def heuristic(state):
+    result = count_members(state["black"]) - count_members(state["white"])
+    return result
+
+def getm(queue):
+    minvalue = queue[0][0]
+    minitem = queue[0]
+    #print("$$$$$$$$$$")
+    #print(type(m_item))
+    #print(type(m_item[0]))
+    for i in queue:
+        if i[0] < minvalue:
+            minvalue = i[0]
+            minitem = i
+    result = copy.deepcopy(minitem)
+    queue.remove(minitem)
+    return result[1]
+
+def first_bfs(start_state):
+    #queue = collections.deque([[start_state]])
+    queue =  []
+    heapq.heappush(queue, (heuristic(state), [state]))
+    print("QUEUE")
+    print(queue)
     seen = list([start_state])
     while queue:
-        path = queue.popleft()
+        path_element = heapq.heappop(q)
+        path = path_element[1]
+        #path = queue.popleft()
         current_state = path[-1]
 
         if count_members(current_state["black"]) <= count_members(current_state["white"]):
             return path
         for white_member in current_state["white"]:
             #add_all_moves(queue, path, seen, white_member[1:3], current_state)
-            add_stack_moves(queue, path, seen, current_state, white_member, round)
+            add_stack_moves(queue, path, seen, current_state, white_member)
 
-def bfs(start_state, round):
-    queue = collections.deque([[start_state]])
+def bfs(start_state):
+    #queue = collections.deque([[start_state]])
+    queue = []
+    queue.append([heuristic(start_state), [start_state]])
     seen = list([start_state])
     while queue:
-        path = queue.popleft()
+        path = getm(queue)
+        #path = queue.popleft()
         current_state = path[-1]
         #boom_state = copy.deepcopy(current_state)
         #for white_member in boom_state["white"]:
@@ -179,7 +203,7 @@ def bfs(start_state, round):
             return path
         for white_member in current_state["white"]:
             #add_all_moves(queue, path, seen, white_member[1:3], current_state)
-            add_stack_moves(queue, path, seen, current_state, white_member, round)
+            add_stack_moves(queue, path, seen, current_state, white_member)
 
 def main():
     with open(sys.argv[1]) as file:
@@ -194,15 +218,15 @@ def main():
         #    path2 = bfs(current_state)
         #    for state in path2:
         #        print(state)
-        max_rounds = count_members(data["white"])
-        round = 1
-        path = None
-        while path == None and round <= max_rounds:
-            print("round", end=" ")
-            print(round)
-            path = bfs(data, round)
-            round += 1
-
+        #max_rounds = count_members(data["white"])
+        #round = 1
+        #path = None
+        #while path == None and round <= max_rounds:
+        #    print("round", end=" ")
+        #    print(round)
+        #    path = bfs(data, round)
+        #    round += 1
+        path = bfs(data)
         #new_state["white"] = [x for x in data["white"] if x[1:3] != [1,4]]
         #new_state["black"] = data["black"]
         #print("NEW STATE", end=":")
@@ -210,7 +234,8 @@ def main():
         #print("DATA", end=":")
         #print(data)
         #print(boom(data, [1,4], []))
-        print(path)
+        for s in path:
+            print(s)
         #queue = collections.deque([[data]])
         #seen = list([data])
         #path = queue.popleft()
