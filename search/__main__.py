@@ -154,6 +154,9 @@ def bfs(start_state):
     seen = list([start_state])
     while queue:
         path = getmin(queue)
+        print("-------")
+        for s in path:
+            print(s)
         current_state = path[-1]
         if len(current_state["black"]) == 0:
             return path
