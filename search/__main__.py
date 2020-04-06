@@ -7,19 +7,12 @@ from search.util import print_move, print_boom, print_board
 
     # TODO: find and print winning action sequence
 
+#boom the token and return the game state after booming
 def boom(current_state, coord, boomed):
-    #print("+++++++START++++++++")
-    #print("coord", end=":")
-    #print(coord)
-    #print("STATE BEFORE BOOM", end=":")
-    #print(current_state)
     new_state = {}
     new_state["white"] = [x for x in current_state["white"] if x[1:3] != coord]
     new_state["black"] = [y for y in current_state["black"] if y[1:3] != coord]
     boomed.append(coord)
-    #print("STATE AFTER BOOM", end=":")
-    #print(new_state)
-    #base case: removed all tokens or no tokens around
     xmin = coord[0]-1
     if xmin < 0:
         xmin = 0
@@ -32,32 +25,19 @@ def boom(current_state, coord, boomed):
     ymax = coord[1]+2
     if ymax > 8:
         ymax = 8
-    #print(range(xmin, xmax))
-    #print(range(ymin, ymax))
     if len(new_state["white"]) == 0 and len(new_state["black"]) == 0:
-    #    print("ALL BOOMED")
         return new_state
-    #print("START BOOMING NEIGHBORS")
     for x in range(xmin, xmax):
         for y in range(ymin, ymax):
-    #        print("x y", end=":")
-    #        print([x,y])
             if [x,y] not in boomed:
-    #            print("already deleted")
                 for member in new_state["white"]+new_state["black"]:
-    #                print("check member", end=" ")
-    #                print(member[1:3], end=" ")
-    #                print("against", end=" ")
-    #                print([x,y])
                     if member[1:3] == [x,y]:
-    #                    print("---------RECURSE----------")
                         new_state = boom(new_state, [x,y], boomed)
                         break;
-    #print(".........End Recurse for", end=" ")
-    #print(coord)
 
     return new_state
 
+#apply the move and return the game state after moving
 def move_stack(current_state, coord, direction, distance, number):
     new_state = copy.deepcopy(current_state)
 
@@ -67,15 +47,15 @@ def move_stack(current_state, coord, direction, distance, number):
     if f_coord in white_list:
         for white_member in new_state["white"]:
             if white_member[1:3] == coord:
-                #if moving all of the stack at once
+                #if moving all of the stack at once then remove current stack
                 if white_member[0] == number:
                     new_state["white"].remove(white_member)
                     break
-                #if moving part of the stack
+                #if moving part of the stack then remove a number from the stack
                 if white_member[0] > number:
                     white_member[0] -= number
 
-
+        #then add the removed items onto existing stack at the destination
         for white_member in new_state["white"]:
             if white_member[1:3] == f_coord:
                 white_member[0] += number
@@ -84,18 +64,18 @@ def move_stack(current_state, coord, direction, distance, number):
     #if not moving onto any other white
     for white_member in new_state["white"]:
         if white_member[1:3] == coord:
-            #if moving all of the stack at once
+            #if moving all of the stack at once then just change the coord
             if number == white_member[0]:
-                #white_member[1:3] = f_coord
                 white_member[1] = f_coord[0]
                 white_member[2] = f_coord[1]
-            #if moving a part of the stack
+            #if moving a part of the stack then add another stack to the detination
             if number < white_member[0]:
                 white_member[0] -= number
                 new_state["white"] += [[number] + f_coord]
 
     return new_state
 
+#get the future coord after moving
 def future_coord(current_coord, direction, distance):
     future_coord = copy.deepcopy(current_coord)
     if direction == "left":
@@ -108,6 +88,7 @@ def future_coord(current_coord, direction, distance):
         future_coord[1] -= distance
     return future_coord
 
+#check if the move is valid
 def movable_stack(current_state, coord, direction, distance):
     f_coord = []
     f_coord = future_coord(coord, direction, distance)
@@ -124,12 +105,14 @@ def movable_stack(current_state, coord, direction, distance):
 
     return True
 
+#count the number of members left in a team
 def count_members(team):
     count = 0
     for member in team:
         count += member[0]
     return count
 
+#add all possible moves to the queue
 def add_stack_moves(queue, path, seen, state, member):
     new_state = {}
     directions = ["left", "right", "up", "down"]
@@ -147,19 +130,16 @@ def add_stack_moves(queue, path, seen, state, member):
     if not (new_state["white"] == 0 and new_state["black"] > 0):
         if new_state not in seen:
             queue.append([heuristic(new_state), (path + [new_state])])
-            #queue.append(path + [new_state])
             seen.append(new_state)
 
+#compute the estimated cost to goal by counting number of black tokens left
 def heuristic(state):
-    result = count_members(state["black"]) - count_members(state["white"])
+    result = count_members(state["black"])
     return result
 
-def getm(queue):
+def getmin(queue):
     minvalue = queue[0][0]
     minitem = queue[0]
-    #print("$$$$$$$$$$")
-    #print(type(m_item))
-    #print(type(m_item[0]))
     for i in queue:
         if i[0] < minvalue:
             minvalue = i[0]
@@ -168,81 +148,24 @@ def getm(queue):
     queue.remove(minitem)
     return result[1]
 
-def first_bfs(start_state):
-    #queue = collections.deque([[start_state]])
-    queue =  []
-    heapq.heappush(queue, (heuristic(state), [state]))
-    print("QUEUE")
-    print(queue)
-    seen = list([start_state])
-    while queue:
-        path_element = heapq.heappop(q)
-        path = path_element[1]
-        #path = queue.popleft()
-        current_state = path[-1]
-
-        if count_members(current_state["black"]) <= count_members(current_state["white"]):
-            return path
-        for white_member in current_state["white"]:
-            #add_all_moves(queue, path, seen, white_member[1:3], current_state)
-            add_stack_moves(queue, path, seen, current_state, white_member)
-
 def bfs(start_state):
-    #queue = collections.deque([[start_state]])
     queue = []
     queue.append([heuristic(start_state), [start_state]])
     seen = list([start_state])
     while queue:
-        path = getm(queue)
-        #path = queue.popleft()
+        path = getmin(queue)
         current_state = path[-1]
-        #boom_state = copy.deepcopy(current_state)
-        #for white_member in boom_state["white"]:
-    #        boom_state = boom(boom_state, white_member[1:3])
         if len(current_state["black"]) == 0:
             return path
         for white_member in current_state["white"]:
-            #add_all_moves(queue, path, seen, white_member[1:3], current_state)
             add_stack_moves(queue, path, seen, current_state, white_member)
 
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-        #print("FIRST ROUND")
-        #path1 = first_bfs(data)
-        #for state in path1:
-        #    print(state)
-        #current_state = path1[-1]
-        #print("SECOND ROUND")
-        #if len(current_state["black"]) > 0:
-        #    path2 = bfs(current_state)
-        #    for state in path2:
-        #        print(state)
-        #max_rounds = count_members(data["white"])
-        #round = 1
-        #path = None
-        #while path == None and round <= max_rounds:
-        #    print("round", end=" ")
-        #    print(round)
-        #    path = bfs(data, round)
-        #    round += 1
         path = bfs(data)
-        #new_state["white"] = [x for x in data["white"] if x[1:3] != [1,4]]
-        #new_state["black"] = data["black"]
-        #print("NEW STATE", end=":")
-        #print(new_state)
-        #print("DATA", end=":")
-        #print(data)
-        #print(boom(data, [1,4], []))
         for s in path:
             print(s)
-        #queue = collections.deque([[data]])
-        #seen = list([data])
-        #path = queue.popleft()
-        #current_state = path[-1]
-        #add_stack_moves(queue, path, seen, current_state, data["white"][0])
-        #for path in queue:
-        #    print(path)
         #for i in range(len(path)):
         #    table = {}
         #    for key, value in path[i].items():
