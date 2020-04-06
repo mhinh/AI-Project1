@@ -137,7 +137,7 @@ def heuristic(state):
     result = count_members(state["black"])
     return result
 
-def getm(queue):
+def getmin(queue):
     minvalue = queue[0][0]
     minitem = queue[0]
     for i in queue:
@@ -153,7 +153,7 @@ def bfs(start_state):
     queue.append([heuristic(start_state), [start_state]])
     seen = list([start_state])
     while queue:
-        path = getm(queue)
+        path = getmin(queue)
         current_state = path[-1]
         if len(current_state["black"]) == 0:
             return path
