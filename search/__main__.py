@@ -164,13 +164,10 @@ def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
         path = bfs(data)
-        for s in path:
-           print(s)
         table = {}
         for key, value in data.items():
             for j in range(len(value)):
                 table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
-        print_board(table)
 
         for i in range(len(path)-1):
             if path[i + 1]['white'] != []:
