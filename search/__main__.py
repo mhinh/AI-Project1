@@ -165,23 +165,12 @@ def main():
         data = json.load(file)
         path = bfs(data)
         for s in path:
-            print(s)
-        for i in range(len(path)):
-            table = {}
-            for key, value in path[i].items():
-                for j in range(len(value)):
-                    table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
-            #print_board(table)
-            #print(table)
-        #for i in range(len(path) - 1):
-        #    if path[i + 1]['white'] != []:
-        #        if len(path[i]['black']) != len(path[i + 1]['black']):
-        #            print_boom(path[i]['white'][-1][1], path[i]['white'][-1][2])
-        #            continue
-        #        print_move(1, path[i]['white'][0][1], path[i]['white'][0][2], path[i + 1]['white'][0][1],
-        #                   path[i + 1]['white'][0][2])
-        #    else:
-        #        print_boom(path[i]['white'][0][1], path[i]['white'][0][2])
+           print(s)
+        table = {}
+        for key, value in data.items():
+            for j in range(len(value)):
+                table[(value[j][1], value[j][2])] = key[0] + ',' + str(value[j][0])
+        print_board(table)
 
         for i in range(len(path)-1):
             if path[i + 1]['white'] != []:
@@ -193,12 +182,12 @@ def main():
                                 print_move(path[i]['white'][j][0],path[i]['white'][j][1], path[i]['white'][j][2], path[i + 1]['white'][j][1],
                                     path[i + 1]['white'][j][2])
                     else:
-                        coords1=[]
-                        coords2=[]
+                        coords_before=[]
+                        coords_after=[]
                         for x in path[i]['white']:
-                            coords1.append([x[1],x[2]])
+                            coords_before.append([x[1],x[2]])
                             for y in path[i+1]['white']:
-                                coords2.append([y[1],y[2]])
+                                coords_after.append([y[1],y[2]])
                                 if [x[1],x[2]] == [y[1],y[2]]:
                                     if x[0] < y[0]:
                                         stack_coord=[x[1],x[2]]
@@ -206,21 +195,21 @@ def main():
                                     if x[0] > y[0]:
                                         stack_coord = [x[1], x[2]]
                                         num_move=y[0]
-                        for coord in coords1:
-                            if coord not in coords2:
+                        for coord in coords_before:
+                            if coord not in coords_after:
                                 print_move(num_move,coord[0],coord[1],stack_coord[0],stack_coord[1])
-                        for coord in coords2:
-                            if coord not in coords1:
+                        for coord in coords_after:
+                            if coord not in coords_before:
                                 print_move(num_move, stack_coord[0], stack_coord[1], coord[0], coord[1])
                 else:
-                    coords1 = []
-                    coords2 = []
+                    coords_before = []
+                    coords_after = []
                     for x in path[i]['white']:
-                        coords1.append([x[1], x[2]])
+                        coords_before.append([x[1], x[2]])
                     for y in path[i + 1]['white']:
-                        coords2.append([y[1], y[2]])
-                    for coord in coords1:
-                        if coord not in coords2:
+                        coords_after.append([y[1], y[2]])
+                    for coord in coords_before:
+                        if coord not in coords_after:
                             print_boom(coord[0], coord[1])
             else:
                 print_boom(path[i]['white'][0][1], path[i]['white'][0][2])
